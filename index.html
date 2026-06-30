@@ -2,175 +2,335 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Công Cụ Chuyển Đổi Đơn Vị</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 30px; background-color: #464646; }
-        .container { max-width: 400px; background: rgb(124, 124, 124); padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        :root {
+            --bg: #0f172a;
+            --panel: #ffffff;
+            --text: #111827;
+            --muted: #6b7280;
+            --accent: #2563eb;
+            --accent-dark: #1d4ed8;
+            --border: #e5e7eb;
+        }
+
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            color: white;
+            min-height: 100vh;
+        }
+        .page {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 32px 20px;
+        }
+        .hero {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        .hero h1 {
+            margin: 0 0 8px;
+            font-size: 2rem;
+        }
+        .hero p {
+            margin: 0;
+            color: #cbd5e1;
+            font-size: 1rem;
+        }
+        .feature-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+        }
+        .feature-card {
+            background: var(--panel);
+            color: var(--text);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            border: 1px solid var(--border);
+        }
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 14px 34px rgba(0,0,0,0.2);
+        }
+        .feature-card h3 {
+            margin: 0 0 8px;
+            font-size: 1.1rem;
+        }
+        .feature-card p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 0.95rem;
+        }
+        .converter-panel {
+            display: none;
+            background: var(--panel);
+            color: var(--text);
+            border-radius: 18px;
+            padding: 24px;
+            box-shadow: 0 12px 32px rgba(0,0,0,0.2);
+        }
+        .converter-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            gap: 12px;
+        }
+        .converter-header h2 {
+            margin: 0;
+        }
+        .back-btn, .convert-btn {
+            border: none;
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: 0.95rem;
+            cursor: pointer;
+        }
+        .back-btn {
+            background: #e5e7eb;
+            color: var(--text);
+        }
+        .convert-btn {
+            background: var(--accent);
+            color: white;
+        }
+        .convert-btn:hover { background: var(--accent-dark); }
         .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; }
-        input, select, button { width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
-        button { background-color: #323232; color: rgb(255, 255, 255); border: none; cursor: pointer; font-size: 16px; }
-        button:hover { background-color: #0056b3; }
-        #result { margin-top: 20px; padding: 10px; background-color: #e2f0d9; border-radius: 4px; font-weight: bold; color: #385723; }
+        label { display: block; margin-bottom: 6px; font-weight: bold; }
+        input, select, button { width: 100%; padding: 10px; box-sizing: border-box; border: 1px solid var(--border); border-radius: 8px; }
+        .result-box {
+            margin-top: 16px;
+            padding: 12px 14px;
+            background: #ecfdf3;
+            border-radius: 10px;
+            font-weight: bold;
+            color: #166534;
+        }
     </style>
 </head>
 <body>
+    <div class="page">
+        <div class="hero">
+            <h1>Chọn tính năng để bắt đầu</h1>
+            <p>Trang chủ này giúp bạn chọn loại chuyển đổi trước, rồi mới vào công cụ chuyển đổi đơn vị.</p>
+        </div>
 
-<div class="container">
-    <h2>Đổi Đơn Vị Đo Lường HTSX</h2>
-    
-    <div class="form-group">
-        <label for="inputValue">Nhập giá trị:</label>
-        <input type="number" id="inputValue" value="10">
+        <div id="featureList" class="feature-list">
+            <div class="feature-card" data-feature="nhiet_do">
+                <h3>🌡️ Nhiệt độ</h3>
+                <p>Chuyển đổi giữa °C, °F và Kelvin.</p>
+            </div>
+            <div class="feature-card" data-feature="ap_suat">
+                <h3>🧯 Áp suất</h3>
+                <p>Chuyển đổi giữa bar, barg và psi.</p>
+            </div>
+            <div class="feature-card" data-feature="flow_rate">
+                <h3>💧 Lưu lượng</h3>
+                <p>Chuyển đổi các đơn vị lưu lượng.</p>
+            </div>
+            <div class="feature-card" data-feature="nang_luong">
+                <h3>⚡ Năng lượng</h3>
+                <p>Chuyển đổi giữa mmBTU và GJ.</p>
+            </div>
+            <div class="feature-card" data-feature="cong_suat">
+                <h3>🔧 Công suất</h3>
+                <p>Chuyển đổi giữa kW và HP.</p>
+            </div>
+            <div class="feature-card" data-feature="khoi_luong">
+                <h3>⚖️ Khối lượng</h3>
+                <p>Chuyển đổi giữa kg, lb và oz.</p>
+            </div>
+            <div class="feature-card" data-feature="nong_do">
+                <h3>🧪 Nồng độ</h3>
+                <p>Chuyển đổi giữa ppm và ppb.</p>
+            </div>
+        </div>
+
+        <div id="converterSection" class="converter-panel">
+            <div class="converter-header">
+                <h2 id="converterTitle">Chuyển đổi</h2>
+                <button class="back-btn" id="backBtn" type="button">← Quay lại</button>
+            </div>
+
+            <div class="form-group">
+                <label for="inputValue">Nhập giá trị:</label>
+                <input type="number" id="inputValue" value="10">
+            </div>
+
+            <div class="form-group">
+                <label for="fromUnit">Từ đơn vị:</label>
+                <select id="fromUnit"></select>
+            </div>
+
+            <div class="form-group">
+                <label for="toUnit">Sang đơn vị:</label>
+                <select id="toUnit"></select>
+            </div>
+
+            <button class="convert-btn" onclick="convert()" type="button">Chuyển đổi</button>
+
+            <div class="result-box" id="ketQuaBox">
+                <p>Kết quả: <span id="result">--</span></p>
+            </div>
+        </div>
     </div>
 
-    <div class="form-group">
-        <label for="typeSelect">Chọn loại đại lượng:</label>
-        <select id="typeSelect" onchange="updateUnits()">
-            <option value="nhiet_do">Nhiệt độ</option>
-            <option value="ap_suat">Áp suất</option>
-            <option value="flow_rate">Lưu lượng</option>
-            <option value="nang_luong">Năng lượng</option>
-            <option value="cong_suat">Công suất</option>
-            <option value="khoi_luong">Khối lượng</option>
-            <option value="nong_do">Nồng độ</option>
-        </select>
-    </div>
+    <select id="typeSelect" hidden></select>
 
-    <div class="form-group">
-        <label for="fromUnit">Từ đơn vị:</label>
-        <select id="fromUnit"></select>
-    </div>
+    <script>
+        const unitData = {
+            nhiet_do: { 'C': 'Độ C (°C)', 'F': 'Độ F (°F)', 'K': 'Kelvin (K)' },
+            ap_suat: { 'barg': 'Barg (barg)', 'bar': 'Bar (bar)', 'psi': 'Pounds per square inch (psi)' },
+            flow_rate: { 'MMSCMD': 'Million standard cubic meters per day (MMSCMD)', 'MMSCFD': 'Million standard cubic feet per day (MMSCFD)', 'L/s': 'Lít trên giây (L/s)', 'm³/h': 'Khối mét trên giờ (m³/h)' },
+            nang_luong: { 'mmBTU': 'BTU (mmBTU)', 'GJ': 'Giga joule (GJ)' },
+            khoi_luong: { 'kg': 'Kilogram (kg)', 'lb': 'Pound (lb)', 'oz': 'Ounce (oz)' },
+            cong_suat: { 'kw': 'Kilowatt (kW)', 'HP': 'Horsepower (HP)' },
+            nong_do: { 'ppm': 'Phần triệu (ppm)', 'ppb': 'Phần tỷ (ppb)' }
+        };
 
-    <div class="form-group">
-        <label for="toUnit">Sang đơn vị:</label>
-        <select id="toUnit"></select>
-    </div>
+        const featureLabels = {
+            nhiet_do: 'Nhiệt độ',
+            ap_suat: 'Áp suất',
+            flow_rate: 'Lưu lượng',
+            nang_luong: 'Năng lượng',
+            cong_suat: 'Công suất',
+            khoi_luong: 'Khối lượng',
+            nong_do: 'Nồng độ'
+        };
 
-    <button onclick="convert()">Chuyển đổi</button>
+        const typeSelect = document.getElementById('typeSelect');
+        const converterSection = document.getElementById('converterSection');
+        const featureList = document.getElementById('featureList');
+        const converterTitle = document.getElementById('converterTitle');
 
-    <div class="result-box" id="ketQuaBox">
-        <p>Kết Quả: <span id="result">--</span></p>
-    </div>
-</div>
-
-<script>
-// Danh sách đơn vị mẫu
-const unitData = {
-    nhiet_do: { 'C': 'Độ C (°C)', 'F': 'Độ F (°F)', 'K': 'Kelvin (K)' },
-    ap_suat: { 'barg': 'Barg (barg)','bar': 'Bar (bar)', 'psi': 'Pounds per square inch (psi)' },
-    flow_rate: { 'MMSCMD': 'Million standard cubic meters per day (MMSCMD)', 'MMSCFD': 'Million standard cubic feet per day (MMSCFD)' ,
-        'L/s': 'Lít trên giây (L/s)', 'm³/h': 'Khối mét trên giờ (m³/h)'
-    },
-    nang_luong: { 'mmBTU': 'BTU (mmBTU)', 'GJ': 'Giga joule (GJ)'},
-    khoi_luong: { 'kg': 'Kilogram (kg)', 'lb': 'Pound (lb)', 'oz': 'Ounce (oz)' },
-    cong_suat: {'kw'  : 'Kilowatt (kW)', 'HP': 'Horsepower (HP)'},
-    nong_do: { 'ppm': 'Phần triệu (ppm)', 'ppb': 'Phần tỷ (ppb)' }
-};
-
-// Cập nhật danh sách đơn vị khi người dùng đổi Loại đại lượng
-function updateUnits() {
-    const type = document.getElementById('typeSelect').value;
-    const fromSelect = document.getElementById('fromUnit');
-    const toSelect = document.getElementById('toUnit');
-    
-    fromSelect.innerHTML = '';
-    toSelect.innerHTML = '';
-    
-    for (let key in unitData[type]) {
-        fromSelect.options.add(new Option(unitData[type][key], key));
-        toSelect.options.add(new Option(unitData[type][key], key));
-    }
-}
-
-// Hàm tính toán logic chuyển đổi
-function convert() {
-    const value = parseFloat(document.getElementById('inputValue').value);
-    const type = document.getElementById('typeSelect').value;
-    const from = document.getElementById('fromUnit').value;
-    const to = document.getElementById('toUnit').value;
-    let result = 0;
-
-    if (from === to) {
-        result = value;
-    } else if (type === 'nhiet_do') {
-        if (from === 'C' && to === 'F') {
-            result = (value * 9/5) + 32;
-        } else if (from === 'F' && to === 'C') {
-            result = (value - 32) * 5/9;
-        } else if (from === 'C' && to === 'K') {
-            result = value + 273.15;
-        } else if (from === 'K' && to === 'C') {
-            result = value - 273.15;
-        } else if (from === 'F' && to === 'K') {
-            result = (value - 32) * 5/9 + 273.15;
-        } else if (from === 'K' && to === 'F') {
-            result = (value - 273.15) * 9/5 + 32;
-        }  
-    }
-    else if (type === 'ap_suat') {
-        if (from === 'bar' && to === 'psi') {
-            result = value * 14.5038;
-        } else if (from === 'psi' && to === 'bar') {
-            result = value / 14.5038;
-        } else if (from === 'barg' && to === 'psi') {
-            result = (value + 1.01325) * 14.5038;
-        } else if (from === 'psi' && to === 'barg') {
-            result = (value / 14.5038) - 1.01325;
-        } else if (from === 'barg' && to === 'bar') {
-            result = value + 1.01325;
-        } else if (from === 'bar' && to === 'barg') {
-            result = value - 1.01325;
+        function populateTypeSelect() {
+            typeSelect.innerHTML = '';
+            Object.keys(featureLabels).forEach((key) => {
+                const option = document.createElement('option');
+                option.value = key;
+                option.textContent = featureLabels[key];
+                typeSelect.appendChild(option);
+            });
         }
-    }
-    else if (type === 'flow_rate') {
-        if (from === 'MMSCMD' && to === 'MMSCFD') {
-            result = value * 35.3147;
-        } else if (from === 'MMSCFD' && to === 'MMSCMD') {
-            result = value / 35.3147;
-        }
-    }
-    else if (type === 'nang_luong') {
-        if (from === 'mmBTU' && to === 'GJ') {
-            result = value * 1.05506;
-        } else if (from === 'GJ' && to === 'mmBTU') {
-            result = value / 1.05506;
-        }
-    }
-    else if (type === 'cong_suat') {
-        if (from === 'kw' && to === 'HP') {
-            result = value * 1.34102;
-        } else if (from === 'HP' && to === 'kw') {
-            result = value / 1.34102;
-        } 
-    }
-    else if (type === 'khoi_luong') {
-        if (from === 'kg' && to === 'lb') {
-            result = value * 2.20462;
-        } else if (from === 'lb' && to === 'kg') {
-            result = value / 2.20462;
-        } else if (from === 'kg' && to === 'oz') {
-            result = value * 35.274;
-        } else if (from === 'oz' && to === 'kg') {
-            result = value / 35.274;
-        } else if (from === 'lb' && to === 'oz') {
-            result = value * 16;
-        } else if (from === 'oz' && to === 'lb') {
-            result = value / 16;
-        }
-    }
-    else if (type === 'nong_do') {
-        // Công thức ppm <-> ppb
-        result = (from === 'ppm') ? value * 1000 : value / 1000;
-    }
 
-    // Hiển thị kết quả ra màn hình
-    document.getElementById('result').innerText = result;
-}
+        function showFeature(featureKey) {
+            typeSelect.value = featureKey;
+            converterTitle.textContent = `Chuyển đổi ${featureLabels[featureKey]}`;
+            featureList.style.display = 'none';
+            converterSection.style.display = 'block';
+            updateUnits();
+        }
 
-// Chạy lần đầu để tự động nạp đơn vị vào menu
-updateUnits();
-</script>
+        function backToFeatures() {
+            featureList.style.display = 'grid';
+            converterSection.style.display = 'none';
+            document.getElementById('result').textContent = '--';
+        }
 
+        function updateUnits() {
+            const type = typeSelect.value;
+            const fromSelect = document.getElementById('fromUnit');
+            const toSelect = document.getElementById('toUnit');
+
+            fromSelect.innerHTML = '';
+            toSelect.innerHTML = '';
+
+            Object.keys(unitData[type]).forEach((key) => {
+                fromSelect.options.add(new Option(unitData[type][key], key));
+                toSelect.options.add(new Option(unitData[type][key], key));
+            });
+        }
+
+        function convert() {
+            const value = parseFloat(document.getElementById('inputValue').value);
+            const type = typeSelect.value;
+            const from = document.getElementById('fromUnit').value;
+            const to = document.getElementById('toUnit').value;
+            let result = 0;
+
+            if (from === to) {
+                result = value;
+            } else if (type === 'nhiet_do') {
+                if (from === 'C' && to === 'F') {
+                    result = (value * 9 / 5) + 32;
+                } else if (from === 'F' && to === 'C') {
+                    result = (value - 32) * 5 / 9;
+                } else if (from === 'C' && to === 'K') {
+                    result = value + 273.15;
+                } else if (from === 'K' && to === 'C') {
+                    result = value - 273.15;
+                } else if (from === 'F' && to === 'K') {
+                    result = (value - 32) * 5 / 9 + 273.15;
+                } else if (from === 'K' && to === 'F') {
+                    result = (value - 273.15) * 9 / 5 + 32;
+                }
+            } else if (type === 'ap_suat') {
+                if (from === 'bar' && to === 'psi') {
+                    result = value * 14.5038;
+                } else if (from === 'psi' && to === 'bar') {
+                    result = value / 14.5038;
+                } else if (from === 'barg' && to === 'psi') {
+                    result = (value + 1.01325) * 14.5038;
+                } else if (from === 'psi' && to === 'barg') {
+                    result = (value / 14.5038) - 1.01325;
+                } else if (from === 'barg' && to === 'bar') {
+                    result = value + 1.01325;
+                } else if (from === 'bar' && to === 'barg') {
+                    result = value - 1.01325;
+                }
+            } else if (type === 'flow_rate') {
+                if (from === 'MMSCMD' && to === 'MMSCFD') {
+                    result = value * 35.3147;
+                } else if (from === 'MMSCFD' && to === 'MMSCMD') {
+                    result = value / 35.3147;
+                }
+            } else if (type === 'nang_luong') {
+                if (from === 'mmBTU' && to === 'GJ') {
+                    result = value * 1.05506;
+                } else if (from === 'GJ' && to === 'mmBTU') {
+                    result = value / 1.05506;
+                }
+            } else if (type === 'cong_suat') {
+                if (from === 'kw' && to === 'HP') {
+                    result = value * 1.34102;
+                } else if (from === 'HP' && to === 'kw') {
+                    result = value / 1.34102;
+                }
+            } else if (type === 'khoi_luong') {
+                if (from === 'kg' && to === 'lb') {
+                    result = value * 2.20462;
+                } else if (from === 'lb' && to === 'kg') {
+                    result = value / 2.20462;
+                } else if (from === 'kg' && to === 'oz') {
+                    result = value * 35.274;
+                } else if (from === 'oz' && to === 'kg') {
+                    result = value / 35.274;
+                } else if (from === 'lb' && to === 'oz') {
+                    result = value * 16;
+                } else if (from === 'oz' && to === 'lb') {
+                    result = value / 16;
+                }
+            } else if (type === 'nong_do') {
+                result = from === 'ppm' ? value * 1000 : value / 1000;
+            }
+
+            document.getElementById('result').innerText = result;
+        }
+
+        document.querySelectorAll('.feature-card').forEach((card) => {
+            card.addEventListener('click', () => showFeature(card.dataset.feature));
+        });
+
+        document.getElementById('backBtn').addEventListener('click', backToFeatures);
+        populateTypeSelect();
+    </script>
 </body>
 </html>
